@@ -67,7 +67,7 @@ def start_command(client, message: Message):
         app.send_message(chat_id=message.chat.id, text="¡Hola! Bienvenido al bot de compresión número 3 del Animal Bot Proyect.")
         app.send_message(chat_id=message.chat.id, text="Para obtener ayuda, utiliza el comando /help.")
     else:
-        app.send_message(chat_id=message.chat.id, text="No tienes acceso. Por favor, contacta a @Music_botsupreme.")
+        app.send_message(chat_id=message.chat.id, text="❎Error no tienes acceso retirate❎.")
         notify_admins(f"El usuario @{username} intentó acceder sin permiso.")
 
 @app.on_message(filters.command("help"))
