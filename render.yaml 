@@ -1,0 +1,7 @@
+build:
+  image: python:3.9
+  environment:
+    - API_ID
+    - API_HASH
+    - BOT_TOKEN
+    - MY_USER_ID

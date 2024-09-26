@@ -1,0 +1,11 @@
+pyrogram
+humanfriendly
+python-dotenv
+tgcrypto 
+numpy
+opencv-python
+ffmpeg-python
+cryptography 
+moviepy 
+telethon 
+pillow 
