@@ -64,8 +64,8 @@ def start_command(client, message: Message):
 
     if is_user_authorized(username):
         add_authorized_user(username)  # Asegura que se agregue al usuario
-        app.send_message(chat_id=message.chat.id, text="¡Hola Gracias por usar el Bot Fox Compress perteneciente al Animal Bot Proyect.")
-        app.send_message(chat_id=message.chat.id, text="Para obtener ayuda, utiliza el comando /help.")
+        app.send_message(chat_id=message.chat.id, text="¡𝙃𝙤𝙡𝙖 𝙗𝙞𝙚𝙣𝙫𝙚𝙣𝙞𝙙𝙤 𝙖 𝘼𝙧𝙢𝙖𝙙𝙞𝙡𝙡𝙤 𝘾𝙤𝙢𝙥𝙧𝙚𝙨𝙨 𝙗𝙤𝙩 𝙥𝙚𝙧𝙩𝙚𝙣𝙚𝙘𝙞𝙚𝙣𝙩𝙚 𝙖𝙡 𝘼𝙣𝙞𝙢𝙖𝙡 𝘽𝙤𝙩 𝙋𝙧𝙤𝙮𝙚𝙘𝙩!.")
+        app.send_message(chat_id=message.chat.id, text="𝙎𝙞 𝙣𝙚𝙘𝙚𝙨𝙞𝙩𝙖𝙨 𝙖𝙮𝙪𝙙𝙖 𝙥𝙧𝙚𝙘𝙞𝙤𝙣𝙖 𝙚𝙡 𝙘𝙤𝙢𝙖𝙣𝙙𝙤 /help 𝙤 /soport.")
     else:
         return
 
@@ -108,10 +108,10 @@ async def compress_video(client, message: Message):  # Cambiar a async
         await app.send_message(chat_id=message.chat.id, text=f"Iniciando la compresión del video...\n"
                                                               f"Tamaño original: {original_size // (1024 * 1024)} MB")
 
-        compressed_video_path = f"{os.path.splitext(original_video_path)[0]}_compressed.mp4"
+        compressed_video_path = f"{os.path.splitext(original_video_path)[0]}_compressed.mkv"
         ffmpeg_command = [
             'ffmpeg', '-y', '-i', original_video_path,
-            '-s', '640x360', '-crf', '34',  # Ajusta el valor de crf para conseguir una mayor compresión
+            '-s', '720x480', '-crf', '40',  # Ajusta el valor de crf para conseguir una mayor compresión
             '-b:a', '48k',  # Reducción de calidad de audio
             '-preset', 'ultrafast',  # Opción para optimizar procesamiento
             '-c:v', 'libx264',
@@ -143,12 +143,12 @@ async def compress_video(client, message: Message):  # Cambiar a async
 
             # Descripción para el video comprimido
             description = (
-                f"✅ Archivo procesado correctamente ✅\n"
-                f"🙃 Tamaño original: {original_size // (1024 * 1024)} MB\n"
-                f"🙂 Tamaño procesado: {compressed_size // (1024 * 1024)} MB\n"
-                f"⌚ Tiempo de procesamiento: {processing_time_str}\n"
-                f"⏲️ Duración: {duration_str}\n"
-                f"🎉 ¡Muchas gracias por usar el bot!🎊"
+                f"✅ 𝙋𝙧𝙤𝙘𝙚𝙨𝙤 𝙩𝙚𝙧𝙢𝙞𝙣𝙖𝙙𝙤 𝙘𝙤𝙧𝙧𝙚𝙘𝙩𝙖𝙢𝙚𝙣𝙩𝙚 ✅\n"
+                f"🙃 𝙏𝙖𝙢𝙖ñ𝙤 𝙤𝙧𝙞𝙜𝙞𝙣𝙖𝙡: {original_size // (1024 * 1024)} MB\n"
+                f"🙂 𝙏𝙖𝙢𝙖ñ𝙤 𝙥𝙧𝙤𝙘𝙚𝙨𝙖𝙙𝙤: {compressed_size // (1024 * 1024)} MB\n"
+                f"⌚ 𝙏𝙞𝙚𝙢𝙥𝙤 𝙙𝙚 𝙥𝙧𝙤𝙘𝙚𝙨𝙖𝙣𝙞𝙚𝙣𝙩𝙤: {processing_time_str}\n"
+                f"⏲️ 𝙏𝙚𝙧𝙢𝙞𝙣𝙤 𝙚𝙣: {duration_str}\n"
+                f"🎉 ¡𝙂𝙧𝙖𝙘𝙞𝙖𝙨 𝙥𝙤𝙧 𝙪𝙨𝙖𝙧 𝙖 𝘼𝙧𝙢𝙖𝙙𝙞𝙡𝙡𝙤 𝘾𝙤𝙢𝙥𝙧𝙚𝙨𝙨!🎊"
             )
 
             # Enviar el video comprimido con la descripción
