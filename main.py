@@ -111,9 +111,9 @@ async def compress_video(client, message: Message):  # Cambiar a async
         compressed_video_path = f"{os.path.splitext(original_video_path)[0]}_compressed.mkv"
         ffmpeg_command = [
             'ffmpeg', '-y', '-i', original_video_path,
-            '-s', '720x480', '-crf', '20',  # Ajusta el valor de crf para conseguir una mayor compresión
+            '-s', '480x360', '-crf', '25',  # Ajusta el valor de crf para conseguir una mayor compresión
             '-b:a', '48k',  # Reducción de calidad de audio
-            '-preset', 'ultrafast',  # Opción para optimizar procesamiento
+            '-preset', 'fast',  # Opción para optimizar procesamiento
             '-c:v', 'libx264',
             compressed_video_path
         ]
