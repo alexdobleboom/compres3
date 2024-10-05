@@ -111,7 +111,7 @@ async def compress_video(client, message: Message):  # Cambiar a async
         compressed_video_path = f"{os.path.splitext(original_video_path)[0]}_compressed.mkv"
         ffmpeg_command = [
             'ffmpeg', '-y', '-i', original_video_path,
-            '-s', '720x480', '-crf', '40',  # Ajusta el valor de crf para conseguir una mayor compresión
+            '-s', '720x480', '-crf', '20',  # Ajusta el valor de crf para conseguir una mayor compresión
             '-b:a', '48k',  # Reducción de calidad de audio
             '-preset', 'ultrafast',  # Opción para optimizar procesamiento
             '-c:v', 'libx264',
@@ -147,7 +147,7 @@ async def compress_video(client, message: Message):  # Cambiar a async
                 f"🙃 𝙏𝙖𝙢𝙖ñ𝙤 𝙤𝙧𝙞𝙜𝙞𝙣𝙖𝙡: {original_size // (1024 * 1024)} MB\n"
                 f"🙂 𝙏𝙖𝙢𝙖ñ𝙤 𝙥𝙧𝙤𝙘𝙚𝙨𝙖𝙙𝙤: {compressed_size // (1024 * 1024)} MB\n"
                 f"⌚ 𝙏𝙞𝙚𝙢𝙥𝙤 𝙙𝙚 𝙥𝙧𝙤𝙘𝙚𝙨𝙖𝙣𝙞𝙚𝙣𝙩𝙤: {processing_time_str}\n"
-                f"⏲️ 𝙏𝙚𝙧𝙢𝙞𝙣𝙤 𝙚𝙣: {duration_str}\n"
+                f"⏲️ 𝙏𝙞𝙚𝙢𝙥𝙤 𝙙𝙚𝙡 𝙫𝙞𝙙𝙚𝙤: {duration_str}\n"
                 f"🎉 ¡𝙂𝙧𝙖𝙘𝙞𝙖𝙨 𝙥𝙤𝙧 𝙪𝙨𝙖𝙧 𝙖 𝘼𝙧𝙢𝙖𝙙𝙞𝙡𝙡𝙤 𝘾𝙤𝙢𝙥𝙧𝙚𝙨𝙨!🎊"
             )
 
