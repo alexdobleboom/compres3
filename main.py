@@ -7,68 +7,23 @@ import shutil
 from pyrogram import Client, filters
 from pyrogram.types import Message
 
+
 # Configuracion del bot
-api_id = os.getenv('24288670')
-api_hash = os.getenv('81c58005802498656d6b689dae1edacc')
-bot_token = os.getenv('7779702228:AAGZ_rauBecTu4PT1gzvBKWXWJY3oXlKTIY')
+api_id = "24288670"
+api_hash = "81c58005802498656d6b689dae1edacc"
+bot_token = "7779702228:AAGZ_rauBecTu4PT1gzvBKWXWJY3oXlKTIY"
 
 # Administradores y Usuarios del bot
-admin_users = list(map(int, os.getenv('ADMINS').split(',')))
-users = list(map(int, os.getenv('USERS').split(',')))
+admin_users = list(map(int, "7551486576".split(',')))
+users = list(map(int, "-1002026366613, -1002392523991".split(',')))
 temp_users = []
 temp_chats = []
 ban_users = []
 allowed_users = admin_users + users + temp_users + temp_chats
 
-# Inicializar la base de datos
-def init_db():
-    conn = sqlite3.connect('user_keys.db')
-    cursor = conn.cursor()
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS user_keys (
-            user_id INTEGER PRIMARY KEY,
-            key TEXT NOT NULL
-        )
-    ''')
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS authorized_users (
-            username TEXT PRIMARY KEY,
-            expires_at DATETIME
-        )
-    ''')
-    conn.commit()
-    conn.close()
-
-def add_authorized_user(username, hours=0):
-    conn = sqlite3.connect('user_keys.db')
-    cursor = conn.cursor()
-    expires_at = datetime.datetime.now() + datetime.timedelta(hours=hours) if hours > 0 else None
-    cursor.execute('INSERT OR REPLACE INTO authorized_users (username, expires_at) VALUES (?, ?)', (username, expires_at))
-    conn.commit()
-    conn.close()
-
-def is_user_authorized(username):
-    conn = sqlite3.connect('user_keys.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM authorized_users WHERE username = ?', (username,))
-    user = cursor.fetchone()
-    conn.close()
-    return user is not None and (user[1] is None or user[1] > datetime.datetime.now())
-
-def notify_admins(message):
-    """Envía notificación a los administradores."""
-    for admin in admin_users:
-        app.send_message(chat_id=admin, text=message)
-
 # Inicializar el bot
 app = Client("compress_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
 
-# Inicializar la base de datos
-init_db()
-
-active_users = {}
-admin_users = set()
-groups = set()
 
 @app.on_message(filters.command("start"))
 def start_command(client, message: Message):
@@ -149,7 +104,7 @@ async def compress_video(client, message: Message):  # Cambiar a async
 
             # Descripción para el video comprimido
             description = (
-                f"꧁༺ 𝑷𝒓𝒐𝒄𝒆𝒔𝒐 𝑭𝒊𝒏𝒂𝒍𝒊𝒔𝒂𝒅𝒐 ༻꧂\n"
+                f"꧁𝑷𝒓𝒐𝒄𝒆𝒔𝒐 𝑭𝒊𝒏𝒂𝒍𝒊𝒔𝒂𝒅𝒐꧂\n"
                 f"⏬ 𝑷𝒆𝒔𝒐 𝑶𝒓𝒊𝒈𝒊𝒏𝒂𝒍: {original_size // (1024 * 1024)} MB\n"
                 f"⏫ 𝑷𝒆𝒔𝒐 𝑷𝒓𝒐𝒄𝒆𝒔𝒂𝒅𝒐: {compressed_size // (1024 * 1024)} MB\n"
                 f"▶️ 𝑻𝒊𝒆𝒎𝒑𝒐 𝒅𝒆 𝑷𝒓𝒐𝒄𝒆𝒔𝒂𝒎𝒊𝒆𝒏𝒕𝒐: {processing_time_str}\n"
@@ -169,82 +124,6 @@ async def compress_video(client, message: Message):  # Cambiar a async
                 os.remove(compressed_video_path)
     else:
         await app.send_message(chat_id=message.chat.id, text="‼️𝑹𝒆𝒔𝒑𝒐𝒏𝒅𝒆 𝒂 𝒖𝒏 𝒗𝒊𝒅𝒆𝒐 𝒑𝒂𝒓𝒂 𝒄𝒐𝒎𝒑𝒓𝒊𝒎𝒊𝒓𝒍𝒐‼️.")
-
-@app.on_message(filters.command("descompress"))
-async def decompress_file(client, message: Message):
-    username = message.from_user.username or f"user_{message.from_user.id}"
-
-    if not is_user_authorized(username):
-        #await app.send_message(chat_id=message.chat.id, text="❌𝑵𝒐 𝒑𝒐𝒔𝒆𝒆 𝒂𝒄𝒄𝒆𝒔𝒐❌.")
-        return
-
-    if message.reply_to_message and message.reply_to_message.document:
-        archive_path = await app.download_media(message.reply_to_message.document)
-        file_extension = os.path.splitext(archive_path)[1].lower()
-        extract_folder = "extracted_files"
-
-        if file_extension != '.zip':
-            await app.send_message(chat_id=message.chat.id, text="𝑬𝒍 𝑭𝒐𝒓𝒎𝒂𝒕𝒐 𝒅𝒆𝒍 𝒂𝒓𝒄𝒉𝒊𝒗𝒐 𝒅𝒆𝒗𝒆 𝒅𝒆 𝒔𝒆𝒓 👉.zip.")
-            return
-
-        os.makedirs(extract_folder, exist_ok=True)
-        await app.send_message(chat_id=message.chat.id, text="↗️𝑬𝒏 𝑷𝒓𝒐𝒈𝒓𝒆𝒔𝒐...↘️")
-
-        try:
-            with zipfile.ZipFile(archive_path, 'r') as zip_ref:
-                zip_ref.extractall(extract_folder)
-
-            await app.send_message(chat_id=message.chat.id, text="😁𝑭𝒊𝒏𝒂𝒍𝒊𝒛𝒂𝒅𝒐😁.")
-            for file in os.listdir(extract_folder):
-                await app.send_document(chat_id=message.chat.id, document=os.path.join(extract_folder, file))
-
-        except Exception as e:
-            await app.send_message(chat_id=message.chat.id, text=f"⭕𝑬𝒓𝒓𝒐𝒓 𝒂𝒍 𝒅𝒆𝒔𝒄𝒐𝒎𝒑𝒓𝒊𝒎𝒊𝒓 𝒆𝒍 𝒂𝒓𝒄𝒉𝒊𝒗𝒐⭕: {e}")
-        finally:
-            if os.path.exists(archive_path):
-                os.remove(archive_path)
-
-            shutil.rmtree(extract_folder)  # Elimina el folder de extracción
-    else:
-        await app.send_message(chat_id=message.chat.id, text="‼️𝑹𝒆𝒔𝒑𝒐𝒏𝒅𝒂 𝒂 𝒖𝒏 𝒂𝒓𝒄𝒉𝒊𝒗𝒐.zip ‼️.")
-
-@app.on_message(filters.command("picarzip"))
-async def split_file(client, message: Message):
-    username = message.from_user.username or f"user_{message.from_user.id}"
-
-    if not is_user_authorized(username):
-        #await app.send_message(chat_id=message.chat.id, text="❌𝑵𝒐 𝒑𝒐𝒔𝒆𝒆 𝒂𝒄𝒄𝒆𝒔𝒐❌.")
-        return
-
-    if message.reply_to_message and message.reply_to_message.document:
-        file_path = await app.download_media(message.reply_to_message.document)
-        parts_list = []
-        part_sizes = [5 * 1024 * 1024, 15 * 1024 * 1024, 25 * 1024 * 1024, 50 * 1024 * 1024, 100 * 1024 * 1024]  # Tamaños en bytes
-
-        await app.send_message(chat_id=message.chat.id, text="↗️𝑷𝒓𝒐𝒄𝒆𝒔𝒐 𝒆𝒏 𝒎𝒂𝒓𝒄𝒉𝒂...↘️")
-        file_size = os.path.getsize(file_path)
-        part_num = 1
-
-        while file_size > 0:
-            size = min(part_sizes[-1], file_size)  # Usar el tamaño máximo definido
-            part_filename = f"{file_path}.part{part_num}"
-
-            with open(part_filename, 'wb') as part_file:
-                with open(file_path, 'rb') as original_file:
-                    part_file.write(original_file.read(size))
-
-            parts_list.append(part_filename)
-            file_size -= size
-            part_num += 1
-
-        for part in parts_list:
-            await app.send_document(chat_id=message.chat.id, document=part)
-            os.remove(part)
-
-        await app.send_message(chat_id=message.chat.id, text="𝑪𝒐𝒎𝒑𝒍𝒆𝒕𝒂𝒅𝒐👌.")
-        os.remove(file_path)  # Eliminar el archivo original después de dividir
-    else:
-        await app.send_message(chat_id=message.chat.id, text="‼️𝑹𝒆𝒔𝒑𝒐𝒏𝒅𝒆 𝒂 𝒖𝒏 𝒂𝒓𝒄𝒉𝒊𝒗𝒐 𝒑𝒂𝒓𝒂 𝒅𝒊𝒗𝒊𝒅𝒊𝒓𝒍𝒐‼️.")
 
 @app.on_message(filters.command("add"))
 def add_user(client, message: Message):
