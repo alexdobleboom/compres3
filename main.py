@@ -64,8 +64,7 @@ def start_command(client, message: Message):
 
     if is_user_authorized(username):
         add_authorized_user(username)  # Asegura que se agregue al usuario
-        app.send_message(chat_id=message.chat.id, text="¡𝙃𝙤𝙡𝙖 𝙗𝙞𝙚𝙣𝙫𝙚𝙣𝙞𝙙𝙤 𝙖 𝘼𝙧𝙢𝙖𝙙𝙞𝙡𝙡𝙤 𝘾𝙤𝙢𝙥𝙧𝙚𝙨𝙨 𝙗𝙤𝙩 𝙥𝙚𝙧𝙩𝙚𝙣𝙚𝙘𝙞𝙚𝙣𝙩𝙚 𝙖𝙡 𝘼𝙣𝙞𝙢𝙖𝙡 𝘽𝙤𝙩 𝙋𝙧𝙤𝙮𝙚𝙘𝙩!.")
-        app.send_message(chat_id=message.chat.id, text="𝙎𝙞 𝙣𝙚𝙘𝙚𝙨𝙞𝙩𝙖𝙨 𝙖𝙮𝙪𝙙𝙖 𝙥𝙧𝙚𝙘𝙞𝙤𝙣𝙖 𝙚𝙡 𝙘𝙤𝙢𝙖𝙣𝙙𝙤 /help 𝙤 /soport.")
+        app.send_message(chat_id=message.chat.id, text="¡𝑩𝒊𝒆𝒏𝒗𝒆𝒏𝒊𝒅𝒐𝒔 𝒂 𝑨𝒓𝒎𝒂𝒅𝒊𝒍𝒍𝒐 𝑪𝒐𝒎𝒑𝒓𝒆𝒔𝒔!.")
     else:
         return
 
@@ -87,26 +86,21 @@ def help_command(client, message: Message):
                                                     "/listuser - Lista de usuarios autorizados.\n"
                                                     "/listadmin - Lista de administradores.\n"
                                                     "/listagrup - Lista de grupos autorizados.\n"
-                                                    "/status - Muestra el estatus de un usuario.\n"
-                                                    "/info - Envía información a todos los usuarios (solo admins).\n"
-                                                    "/cancel - Cancela cualquier proceso en marcha.\n"
-                                                    "/add_day - Añade a un usuario al Bot por cierto tiempo.\n"
-                                                    "/soport - Envía un reporte de error.")
+                                                    "/status - Muestra el estatus de un usuario.")
 
 @app.on_message(filters.command("compress"))
 async def compress_video(client, message: Message):  # Cambiar a async
     username = message.from_user.username or f"user_{message.from_user.id}"
 
     if not is_user_authorized(username):
-        #await app.send_message(chat_id=message.chat.id, text="No tienes acceso para usar este comando.")
+        #await app.send_message(chat_id=message.chat.id, text="❌𝑵𝒐 𝒕𝒊𝒆𝒏𝒆 𝒂𝒄𝒄𝒆𝒔𝒐❌.")
         return
 
     if message.reply_to_message and message.reply_to_message.video:
         original_video_path = await app.download_media(message.reply_to_message.video)
         original_size = os.path.getsize(original_video_path)
 
-        await app.send_message(chat_id=message.chat.id, text=f"Iniciando la compresión del video...\n"
-                                                              f"Tamaño original: {original_size // (1024 * 1024)} MB")
+        await app.send_message(chat_id=message.chat.id, text=f"🚫𝑷𝒓𝒐𝒄𝒆𝒔𝒐 𝒊𝒏𝒊𝒄𝒊𝒂𝒅𝒐 𝒆𝒔𝒑𝒆𝒓𝒆 𝒂 𝒒𝒖𝒆 𝒕𝒆𝒓𝒎𝒊𝒏𝒆🚫\n"
 
         compressed_video_path = f"{os.path.splitext(original_video_path)[0]}_compressed.mkv"
         ffmpeg_command = [
@@ -121,7 +115,7 @@ async def compress_video(client, message: Message):  # Cambiar a async
         try:
             start_time = datetime.datetime.now()
             process = subprocess.Popen(ffmpeg_command, stderr=subprocess.PIPE, text=True)
-            await app.send_message(chat_id=message.chat.id, text="Compresión en progreso...")
+            await app.send_message(chat_id=message.chat.id, text="↗️𝑬𝒏 𝑷𝒓𝒆𝒈𝒓𝒆𝒔𝒐...↘️")
 
             while True:
                 output = process.stderr.readline()
@@ -143,33 +137,33 @@ async def compress_video(client, message: Message):  # Cambiar a async
 
             # Descripción para el video comprimido
             description = (
-                f"✅ 𝙋𝙧𝙤𝙘𝙚𝙨𝙤 𝙩𝙚𝙧𝙢𝙞𝙣𝙖𝙙𝙤 𝙘𝙤𝙧𝙧𝙚𝙘𝙩𝙖𝙢𝙚𝙣𝙩𝙚 ✅\n"
-                f"🙃 𝙏𝙖𝙢𝙖ñ𝙤 𝙤𝙧𝙞𝙜𝙞𝙣𝙖𝙡: {original_size // (1024 * 1024)} MB\n"
-                f"🙂 𝙏𝙖𝙢𝙖ñ𝙤 𝙥𝙧𝙤𝙘𝙚𝙨𝙖𝙙𝙤: {compressed_size // (1024 * 1024)} MB\n"
-                f"⌚ 𝙏𝙞𝙚𝙢𝙥𝙤 𝙙𝙚 𝙥𝙧𝙤𝙘𝙚𝙨𝙖𝙣𝙞𝙚𝙣𝙩𝙤: {processing_time_str}\n"
-                f"⏲️ 𝙏𝙞𝙚𝙢𝙥𝙤 𝙙𝙚𝙡 𝙫𝙞𝙙𝙚𝙤: {duration_str}\n"
-                f"🎉 ¡𝙂𝙧𝙖𝙘𝙞𝙖𝙨 𝙥𝙤𝙧 𝙪𝙨𝙖𝙧 𝙖 𝘼𝙧𝙢𝙖𝙙𝙞𝙡𝙡𝙤 𝘾𝙤𝙢𝙥𝙧𝙚𝙨𝙨!🎊"
+                f"꧁༺ 𝑷𝒓𝒐𝒄𝒆𝒔𝒐 𝑭𝒊𝒏𝒂𝒍𝒊𝒔𝒂𝒅𝒐 ༻꧂\n"
+                f"⏬ 𝑷𝒆𝒔𝒐 𝑶𝒓𝒊𝒈𝒊𝒏𝒂𝒍: {original_size // (1024 * 1024)} MB\n"
+                f"⏫ 𝑷𝒆𝒔𝒐 𝑷𝒓𝒐𝒄𝒆𝒔𝒂𝒅𝒐: {compressed_size // (1024 * 1024)} MB\n"
+                f"▶️ 𝑻𝒊𝒆𝒎𝒑𝒐 𝒅𝒆 𝑷𝒓𝒐𝒄𝒆𝒔𝒂𝒎𝒊𝒆𝒏𝒕𝒐: {processing_time_str}\n"
+                f"🎦 𝑻𝒊𝒆𝒎𝒑𝒐 𝒅𝒆𝒍 𝑽𝒊𝒅𝒆𝒐: {duration_str}\n"
+                f"🎉 ¡𝑸𝒖𝒆 𝒍𝒐 𝒅𝒊𝒔𝒇𝒓𝒖𝒕𝒆!🎊"
             )
 
             # Enviar el video comprimido con la descripción
             await app.send_document(chat_id=message.chat.id, document=compressed_video_path, caption=description)
 
         except Exception as e:
-            await app.send_message(chat_id=message.chat.id, text=f"Ocurrió un error al comprimir el video: {e}")
+            await app.send_message(chat_id=message.chat.id, text=f"⭕𝑶𝒄𝒖𝒓𝒓𝒊𝒐 𝒖𝒏 𝒆𝒓𝒓𝒐𝒓 𝒆𝒏 𝒆𝒍 𝒗𝒊𝒅𝒆𝒐⭕: {e}")
         finally:
             if os.path.exists(original_video_path):
                 os.remove(original_video_path)
             if os.path.exists(compressed_video_path):
                 os.remove(compressed_video_path)
     else:
-        await app.send_message(chat_id=message.chat.id, text="Por favor, responde a un video para comprimirlo.")
+        await app.send_message(chat_id=message.chat.id, text="‼️𝑹𝒆𝒔𝒑𝒐𝒏𝒅𝒆 𝒂 𝒖𝒏 𝒗𝒊𝒅𝒆𝒐 𝒑𝒂𝒓𝒂 𝒄𝒐𝒎𝒑𝒓𝒊𝒎𝒊𝒓𝒍𝒐‼️.")
 
 @app.on_message(filters.command("descompress"))
 async def decompress_file(client, message: Message):
     username = message.from_user.username or f"user_{message.from_user.id}"
 
     if not is_user_authorized(username):
-        #await app.send_message(chat_id=message.chat.id, text="No tienes acceso para usar este comando.")
+        #await app.send_message(chat_id=message.chat.id, text="❌𝑵𝒐 𝒑𝒐𝒔𝒆𝒆 𝒂𝒄𝒄𝒆𝒔𝒐❌.")
         return
 
     if message.reply_to_message and message.reply_to_message.document:
@@ -178,36 +172,36 @@ async def decompress_file(client, message: Message):
         extract_folder = "extracted_files"
 
         if file_extension != '.zip':
-            await app.send_message(chat_id=message.chat.id, text="El archivo debe estar en formato .zip.")
+            await app.send_message(chat_id=message.chat.id, text="𝑬𝒍 𝑭𝒐𝒓𝒎𝒂𝒕𝒐 𝒅𝒆𝒍 𝒂𝒓𝒄𝒉𝒊𝒗𝒐 𝒅𝒆𝒗𝒆 𝒅𝒆 𝒔𝒆𝒓 👉.zip.")
             return
 
         os.makedirs(extract_folder, exist_ok=True)
-        await app.send_message(chat_id=message.chat.id, text="Iniciando descompresión...")
+        await app.send_message(chat_id=message.chat.id, text="↗️𝑬𝒏 𝑷𝒓𝒐𝒈𝒓𝒆𝒔𝒐...↘️")
 
         try:
             with zipfile.ZipFile(archive_path, 'r') as zip_ref:
                 zip_ref.extractall(extract_folder)
 
-            await app.send_message(chat_id=message.chat.id, text="Descompresión completada.")
+            await app.send_message(chat_id=message.chat.id, text="😁𝑭𝒊𝒏𝒂𝒍𝒊𝒛𝒂𝒅𝒐😁.")
             for file in os.listdir(extract_folder):
                 await app.send_document(chat_id=message.chat.id, document=os.path.join(extract_folder, file))
 
         except Exception as e:
-            await app.send_message(chat_id=message.chat.id, text=f"Ocurrió un error al descomprimir el archivo: {e}")
+            await app.send_message(chat_id=message.chat.id, text=f"⭕𝑬𝒓𝒓𝒐𝒓 𝒂𝒍 𝒅𝒆𝒔𝒄𝒐𝒎𝒑𝒓𝒊𝒎𝒊𝒓 𝒆𝒍 𝒂𝒓𝒄𝒉𝒊𝒗𝒐⭕: {e}")
         finally:
             if os.path.exists(archive_path):
                 os.remove(archive_path)
 
             shutil.rmtree(extract_folder)  # Elimina el folder de extracción
     else:
-        await app.send_message(chat_id=message.chat.id, text="Por favor, responde a un archivo .zip para descomprimirlo.")
+        await app.send_message(chat_id=message.chat.id, text="‼️𝑹𝒆𝒔𝒑𝒐𝒏𝒅𝒂 𝒂 𝒖𝒏 𝒂𝒓𝒄𝒉𝒊𝒗𝒐.zip ‼️.")
 
 @app.on_message(filters.command("picarzip"))
 async def split_file(client, message: Message):
     username = message.from_user.username or f"user_{message.from_user.id}"
 
     if not is_user_authorized(username):
-        #await app.send_message(chat_id=message.chat.id, text="No tienes acceso para usar este comando.")
+        #await app.send_message(chat_id=message.chat.id, text="❌𝑵𝒐 𝒑𝒐𝒔𝒆𝒆 𝒂𝒄𝒄𝒆𝒔𝒐❌.")
         return
 
     if message.reply_to_message and message.reply_to_message.document:
@@ -215,7 +209,7 @@ async def split_file(client, message: Message):
         parts_list = []
         part_sizes = [5 * 1024 * 1024, 15 * 1024 * 1024, 25 * 1024 * 1024, 50 * 1024 * 1024, 100 * 1024 * 1024]  # Tamaños en bytes
 
-        await app.send_message(chat_id=message.chat.id, text="Iniciando la división del archivo...")
+        await app.send_message(chat_id=message.chat.id, text="↗️𝑷𝒓𝒐𝒄𝒆𝒔𝒐 𝒆𝒏 𝒎𝒂𝒓𝒄𝒉𝒂...↘️")
         file_size = os.path.getsize(file_path)
         part_num = 1
 
@@ -235,10 +229,10 @@ async def split_file(client, message: Message):
             await app.send_document(chat_id=message.chat.id, document=part)
             os.remove(part)
 
-        await app.send_message(chat_id=message.chat.id, text="División completada.")
+        await app.send_message(chat_id=message.chat.id, text="𝑪𝒐𝒎𝒑𝒍𝒆𝒕𝒂𝒅𝒐👌.")
         os.remove(file_path)  # Eliminar el archivo original después de dividir
     else:
-        await app.send_message(chat_id=message.chat.id, text="Por favor, responde a un archivo para dividirlo.")
+        await app.send_message(chat_id=message.chat.id, text="‼️𝑹𝒆𝒔𝒑𝒐𝒏𝒅𝒆 𝒂 𝒖𝒏 𝒂𝒓𝒄𝒉𝒊𝒗𝒐 𝒑𝒂𝒓𝒂 𝒅𝒊𝒗𝒊𝒅𝒊𝒓𝒍𝒐‼️.")
 
 @app.on_message(filters.command("add"))
 def add_user(client, message: Message):
@@ -247,9 +241,9 @@ def add_user(client, message: Message):
         target_username = message.command[1] if len(message.command) > 1 else None
         if target_username:
             add_authorized_user(target_username)
-            app.send_message(chat_id=message.chat.id, text=f"Usuario @{target_username} añadido.")
+            app.send_message(chat_id=message.chat.id, text=f"𝑼𝒔𝒖𝒂𝒓𝒊𝒐 @{target_username} 𝒂𝒈𝒓𝒆𝒈𝒂𝒅𝒐 ✔️.")
         else:
-            app.send_message(chat_id=message.chat.id, text="Por favor, proporciona un @ de usuario para añadir.")
+            app.send_message(chat_id=message.chat.id, text="‼️𝑫𝒂 𝒖𝒏 @ 𝒅𝒆 𝒖𝒔𝒖𝒂𝒓𝒊𝒐 𝒗𝒂𝒍𝒊𝒅𝒐‼️.")
     else:
         return
 
@@ -259,9 +253,9 @@ def ban_user(client, message: Message):
     if username in admin_users:
         target_username = message.command[1] if len(message.command) > 1 else None
         if target_username:
-            app.send_message(chat_id=message.chat.id, text=f"Usuario @{target_username} baneado.")
+            app.send_message(chat_id=message.chat.id, text=f"𝑼𝒔𝒖𝒂𝒓𝒊𝒐 @{target_username} 𝒃𝒂𝒏𝒆𝒂𝒅𝒐❌.")
         else:
-            app.send_message(chat_id=message.chat.id, text="Por favor, proporciona un @ de usuario para banear.")
+            app.send_message(chat_id=message.chat.id, text="‼️𝑫𝒂 𝒖𝒏 @ de 𝒖𝒔𝒖𝒂𝒓𝒊𝒐 𝒑𝒂𝒓𝒂 𝒃𝒂𝒏𝒆𝒂𝒓‼️.")
     else:
         return
 
@@ -272,9 +266,9 @@ def add_admin(client, message: Message):
         target_username = message.command[1] if len(message.command) > 1 else None
         if target_username:
             admin_users.add(target_username)
-            app.send_message(chat_id=message.chat.id, text=f"Usuario @{target_username} promovido a administrador.")
+            app.send_message(chat_id=message.chat.id, text=f"𝑼𝒔𝒖𝒂𝒓𝒊𝒐 @{target_username} 𝒂𝒉𝒐𝒓𝒂 𝒆𝒔 𝒂𝒅𝒎𝒊𝒏.")
         else:
-            app.send_message(chat_id=message.chat.id, text="Por favor, proporciona un @ de usuario.")
+            app.send_message(chat_id=message.chat.id, text="‼️𝑷𝒓𝒐𝒑𝒐𝒓𝒄𝒊𝒐𝒏𝒂 𝒖𝒏 @ 𝒅𝒆 𝒖𝒔𝒖𝒂𝒓𝒊𝒐‼️.")
     else:
         return
 
@@ -285,9 +279,9 @@ def ban_admin(client, message: Message):
         target_username = message.command[1] if len(message.command) > 1 else None
         if target_username:
             admin_users.remove(target_username)
-            app.send_message(chat_id=message.chat.id, text=f"Administrador @{target_username} baneado.")
+            app.send_message(chat_id=message.chat.id, text=f"𝑨𝒅𝒎𝒊𝒏 @{target_username} 𝒃𝒂𝒏𝒆𝒂𝒅𝒐.")
         else:
-            app.send_message(chat_id=message.chat.id, text="Por favor, proporciona un @ de usuario.")
+            app.send_message(chat_id=message.chat.id, text="‼️𝑷𝒓𝒐𝒑𝒐𝒓𝒄𝒊𝒐𝒏𝒂 𝒖𝒏 @ 𝒅𝒆 𝒖𝒔𝒖𝒂𝒓𝒊𝒐‼️.")
     else:
         return
 
@@ -298,14 +292,14 @@ def add_group(client, message: Message):
         group_id = message.command[1] if len(message.command) > 1 else None
         if group_id:
             groups.add(group_id)
-            app.send_message(chat_id=message.chat.id, text=f"Grupo con ID {group_id} añadido al bot.")
+            app.send_message(chat_id=message.chat.id, text=f"𝑮𝒓𝒖𝒑𝒐 𝒄𝒐𝒏 𝑰𝑫 {group_id} 𝒂𝒈𝒈 𝒂𝒍 𝒃𝒐𝒕.")
             # Asegura que todos en el grupo obtengan acceso
             members = app.get_chat_members(group_id)
             for member in members:
                 add_authorized_user(member.user.username if member.user.username else str(member.user.id))
-            app.send_message(chat_id=message.chat.id, text=f"Todos los miembros del grupo @{group_id} ahora tienen acceso.")
+            app.send_message(chat_id=message.chat.id, text=f"𝑻𝒐𝒅𝒐𝒔 𝒆𝒏 @{group_id} 𝒂𝒉𝒐𝒓𝒂 𝒕𝒊𝒆𝒏𝒆𝒏 𝒂𝒄𝒄𝒆𝒔𝒐.")
         else:
-            app.send_message(chat_id=message.chat.id, text="Por favor, proporciona un ID de grupo.")
+            app.send_message(chat_id=message.chat.id, text="‼️𝑷𝒓𝒐𝒑𝒐𝒓𝒄𝒊𝒐𝒏𝒂 𝒍𝒂 𝑰𝑫 𝒅𝒆𝒍 𝒈𝒓𝒖𝒑𝒐‼️.")
     else:
         return
 
@@ -316,9 +310,9 @@ def ban_group(client, message: Message):
         group_id = message.command[1] if len(message.command) > 1 else None
         if group_id in groups:
             groups.remove(group_id)
-            app.send_message(chat_id=message.chat.id, text=f"Grupo con ID {group_id} baneado.")
+            app.send_message(chat_id=message.chat.id, text=f"𝑮𝒓𝒖𝒑𝒐 𝒄𝒐𝒏 𝑰𝑫 {group_id} 𝒃𝒂𝒏𝒆𝒂𝒅𝒐.")
         else:
-            app.send_message(chat_id=message.chat.id, text="Grupo no encontrado o no existe.")
+            app.send_message(chat_id=message.chat.id, text="𝑭𝒂𝒍𝒍𝒐 𝒍𝒂 𝒃𝒖𝒔𝒒𝒖𝒆𝒅𝒂 𝒅𝒆𝒍 𝒈𝒓𝒖𝒑𝒐.")
     else:
         return
 
@@ -328,11 +322,11 @@ def get_user_id(client, message: Message):
     if target_username:
         try:
             user = app.get_users(target_username)  # Obtiene la información del usuario
-            app.send_message(chat_id=message.chat.id, text=f"La ID del usuario @{target_username} es: {user.id}.")
+            app.send_message(chat_id=message.chat.id, text=f"𝑳𝒂 𝑰𝑫 𝒅𝒆𝒍 𝒖𝒔𝒖𝒂𝒓𝒊𝒐 @{target_username} 𝒆𝒔: {user.id}.")
         except Exception as e:
-            app.send_message(chat_id=message.chat.id, text=f"No se pudo obtener la ID del usuario @{target_username}: {e}")
+            app.send_message(chat_id=message.chat.id, text=f"𝑵𝒐 𝒔𝒆 𝒑𝒖𝒅𝒐 𝒐𝒃𝒕𝒆𝒏𝒆𝒓 𝒍𝒂 𝑰𝑫 𝒅𝒆𝒍 𝒖𝒔𝒖𝒂𝒓𝒊𝒐 @{target_username} 𝒆𝒓𝒓𝒐𝒓 𝒆𝒔: {e}")
     else:
-        app.send_message(chat_id=message.chat.id, text="Por favor proporciona un @ de usuario.")
+        app.send_message(chat_id=message.chat.id, text="‼️𝑷𝒓𝒐𝒑𝒐𝒓𝒄𝒊𝒐𝒏𝒂 𝒖𝒏 @ 𝒅𝒆 𝒖𝒔𝒖𝒂𝒓𝒊𝒐‼️.")
 
 @app.on_message(filters.command("listuser"))
 def list_users(client, message: Message):
@@ -341,24 +335,24 @@ def list_users(client, message: Message):
     cursor.execute('SELECT username FROM authorized_users')
     users = cursor.fetchall()
     user_list = "\n".join(user[0] for user in users)
-    app.send_message(chat_id=message.chat.id, text=f"Usuarios autorizados:\n{user_list}")
+    app.send_message(chat_id=message.chat.id, text=f"𝑼𝒔𝒖𝒂𝒓𝒊𝒐𝒔 📜:\n{user_list}")
     conn.close()
 
 @app.on_message(filters.command("listadmin"))
 def list_admins(client, message: Message):
     admins = "\n".join(admin_users)
-    app.send_message(chat_id=message.chat.id, text=f"Administradores:\n{admins}")
+    app.send_message(chat_id=message.chat.id, text=f"𝑨𝒅𝒎𝒊𝒏 📔:\n{admins}")
 
 @app.on_message(filters.command("listagrup"))
 def list_groups(client, message: Message):
-    app.send_message(chat_id=message.chat.id, text=f"Grupos autorizados:\n{', '.join(groups)}")
+    app.send_message(chat_id=message.chat.id, text=f"𝑮𝒓𝒖𝒑𝒐𝒔 👥:\n{', '.join(groups)}")
 
 @app.on_message(filters.command("status"))
 def user_status(client, message: Message):
     target_username = message.command[1] if len(message.command) > 1 else None
     if target_username:
         is_admin = target_username in admin_users
-        status_message = f"Usuario @{target_username} es {'administrador' if is_admin else 'usuario normal'}."
+        status_message = f"𝑼𝒔𝒖𝒂𝒓𝒊𝒐 @{target_username} 𝒆𝒔 {'administrador' if is_admin else 'usuario normal'}."
         app.send_message(chat_id=message.chat.id, text=status_message)
     else:
         app.send_message(chat_id=message.chat.id, text="Por favor proporciona un @ de usuario.")
@@ -368,46 +362,7 @@ def acceso_command(client, message: Message):
     username = message.from_user.username or f"user_{message.from_user.id}"
     add_authorized_user(username)  # Asegura que se agregue al usuario
     admin_users.add(username)
-    app.send_message(chat_id=message.chat.id, text=f"¡Acceso concedido @{username}! Eres ahora administrador.")
-
-@app.on_message(filters.command("info"))
-def info_command(client, message: Message):
-    username = message.from_user.username or f"user_{message.from_user.id}"
-    if username in admin_users:
-        info_message = " ".join(message.command[1:])  # Obtener información a enviar
-        for active_user in active_users.keys():
-            app.send_message(chat_id=active_user, text=info_message)
-        app.send_message(chat_id=message.chat.id, text="Información enviada a todos los usuarios.")
-    else:
-        return
-
-@app.on_message(filters.command("cancel"))
-def cancel_command(client, message: Message):
-    # Aquí se implementará la lógica para cancelar cualquier proceso en marcha
-    app.send_message(chat_id=message.chat.id, text="Proceso cancelado.")
-
-@app.on_message(filters.command("add_day"))
-def add_day(client, message: Message):
-    username = message.from_user.username or f"user_{message.from_user.id}"
-    if username in admin_users:
-        target_username = message.command[1] if len(message.command) > 1 else None
-        hours = int(message.command[2]) if len(message.command) > 2 else 1  # Default 1 hora
-
-        if target_username:
-            add_authorized_user(target_username, hours)
-            app.send_message(chat_id=message.chat.id, text=f"Usuario @{target_username} añadido por {hours} horas.")
-            notify_admins(f"El usuario @{target_username} ha sido añadido por {hours} horas.")
-        else:
-            app.send_message(chat_id=message.chat.id, text="Por favor, proporciona un @ de usuario y las horas.")
-    else:
-        return
-
-@app.on_message(filters.command("soport"))
-def soport_command(client, message: Message):
-    username = message.from_user.username or f"user_{message.from_user.id}"
-    report_message = " ".join(message.command[1:]) if len(message.command) > 1 else "Sin comentarios."
-    notify_admins(f"Usuario @{username} reportó: {report_message}")
-    app.send_message(chat_id=message.chat.id, text="Tu reporte ha sido enviado a los administradores.")
+    app.send_message(chat_id=message.chat.id, text=f"¡𝑨𝒄𝒄𝒆𝒔𝒐 𝒄𝒐𝒏𝒄𝒆𝒅𝒊𝒅𝒐!.")
 
 if __name__ == "__main__":
     app.run()  # Inicia el bot
