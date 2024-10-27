@@ -22,7 +22,7 @@ ban_users = []
 allowed_users = admin_users + users + temp_users + temp_chats
 
 # Inicializar el bot
-app = Client("compress_bot", api_id=API_ID, api_hash=API_HASH, bot_token=BOT_TOKEN)
+app = Client("compress_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
 
 @app.on_message(filters.command("start"))
