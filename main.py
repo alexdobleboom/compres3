@@ -6,7 +6,19 @@ import datetime
 import shutil
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from config import API_ID, API_HASH, BOT_TOKEN
+
+# Configuracion del bot
+api_id = os.getenv('24288670')
+api_hash = os.getenv('81c58005802498656d6b689dae1edacc')
+bot_token = os.getenv('7779702228:AAGZ_rauBecTu4PT1gzvBKWXWJY3oXlKTIY')
+
+# Administradores y Usuarios del bot
+admin_users = list(map(int, os.getenv('ADMINS').split(',')))
+users = list(map(int, os.getenv('USERS').split(',')))
+temp_users = []
+temp_chats = []
+ban_users = []
+allowed_users = admin_users + users + temp_users + temp_chats
 
 # Inicializar la base de datos
 def init_db():
