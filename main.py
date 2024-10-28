@@ -76,6 +76,8 @@ async def start(client, message):
         ]
     )
     await message.reply_text("👋𝑩𝒊𝒆𝒏𝒗𝒆𝒏𝒊𝒅𝒐 𝒂 𝑨𝒓𝒎𝒂𝒅𝒊𝒍𝒍𝒐 𝑪𝒐𝒎𝒑𝒓𝒆𝒔𝒔 📚", reply_markup=inline_markup)
+else:
+        return
 
 
 @app.on_message(filters.command("help"))
