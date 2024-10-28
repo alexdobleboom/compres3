@@ -58,21 +58,18 @@ active_users = {}
 admin_users = set()
 groups = set()
 
-@app.on_message(filters.command("start"))
-def start_command(client, message: Message):
-    username = message.from_user.username or f"user_{message.from_user.id}"
-    
-    inline_markup = types.InlineKeyboardMarkup()
-    inline_markup.add(
-        types.InlineKeyboardButton("Canal Oficial", url="https://t.me/ZonaFreeCanal"),
-        types.InlineKeyboardButton("Admi", url="t.me/TheDemonsuprem")
+@app.on_message(filters.command(["start"]))
+async def start(client, message):
+    inline_markup = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("Canal Oficial", url="https://t.me/ZonaFreeCanal"),
+                InlineKeyboardButton("Admi", url="t.me/TheDemonsuprem")
+            ]
+        ]
     )
+    await message.reply_text("¡𝑩𝒊𝒆𝒏𝒗𝒆𝒏𝒊𝒅𝒐𝒔 𝒂 𝑨𝒓𝒎𝒂𝒅𝒊𝒍𝒍𝒐 𝑪𝒐𝒎𝒑𝒓𝒆𝒔𝒔!", reply_markup=inline_markup)
 
-    if is_user_authorized(username):
-        add_authorized_user(username)  # Asegura que se agregue al usuario
-        app.send_message(chat_id=message.chat.id, text="¡𝑩𝒊𝒆𝒏𝒗𝒆𝒏𝒊𝒅𝒐𝒔 𝒂 𝑨𝒓𝒎𝒂𝒅𝒊𝒍𝒍𝒐 𝑪𝒐𝒎𝒑𝒓𝒆𝒔𝒔!. reply_markup=inline_markup")
-    else:
-        return
 
 @app.on_message(filters.command("help"))
 def help_command(client, message: Message):
