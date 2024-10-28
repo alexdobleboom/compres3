@@ -8,6 +8,7 @@ from pyrogram import Client, filters
 from pyrogram.types import Message
 from config import API_ID, API_HASH, BOT_TOKEN
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup # Importa InlineKeyboardMarkup
+import datetime
 
 # Inicializar la base de datos
 def init_db():
@@ -59,26 +60,67 @@ active_users = {}
 admin_users = set()
 groups = set()
 
-@app.on_message(filters.command(["start"]))
-async def start(client, message):
+@app.on_message(filters.command("start"))
+def start_command(client, message: Message):
     username = message.from_user.username or f"user_{message.from_user.id}"
 
     if is_user_authorized(username):
-        add_authorized_user(username)  # Asegura que se agregue al usuario
-        app
-        
-    inline_markup = InlineKeyboardMarkup(
-        [
+        add_authorized_user(username) # Asegura que se agregue al usuario
+        # Crea el teclado inline
+        keyboard = InlineKeyboardMarkup(
             [
-                InlineKeyboardButton("Canal Oficial©️", url="https://t.me/ZonaFreeCanal"),
-                InlineKeyboardButton("Admi👨‍💻", url="t.me/TheDemonsuprem")
+                [InlineKeyboardButton("𝑪𝒂𝒏𝒂𝒍 𝑶𝒇𝒊𝒄𝒊𝒂𝒍 💬", url="https://t.me/ZonaFreeCanal")],
+                [InlineKeyboardButton("𝑨𝒅𝒎𝒊𝒏𝒊𝒔𝒕𝒓𝒂𝒅𝒐𝒓 👨‍💻", url="t.me/TheDemonsuprem")]
             ]
-        ]
-    )
-    await message.reply_text("👋𝑩𝒊𝒆𝒏𝒗𝒆𝒏𝒊𝒅𝒐 𝒂 𝑨𝒓𝒎𝒂𝒅𝒊𝒍𝒍𝒐 𝑪𝒐𝒎𝒑𝒓𝒆𝒔𝒔 📚", reply_markup=inline_markup)
-else:
+        )
+        app.send_message(chat_id=message.chat.id, text="¡👋𝑩𝒊𝒆𝒏𝒗𝒆𝒏𝒊𝒅𝒐𝒔 𝒂 𝑨𝒓𝒎𝒂𝒅𝒊𝒍𝒍𝒐 𝑪𝒐𝒎𝒑𝒓𝒆𝒔𝒔 📚!. ¿Qué deseas hacer?", reply_markup=keyboard)
+    else:
         return
 
+@app.on_message(filters.command("db"))
+def save_db(client, message: Message):
+    conn = sqlite3.connect('user_keys.db')
+    cursor = conn.cursor()
+
+    # Guarda la información de todos los usuarios en la base de datos
+    for user in app.get_users():
+        cursor.execute("""
+            INSERT OR IGNORE INTO authorized_users (username, expires_at)
+            VALUES (?, ?)
+        """, (user.username, None))
+
+    conn.commit()
+    conn.close()
+    app.send_message(chat_id=message.chat.id, text="𝑰𝒏𝒇𝒐𝒓𝒎𝒂𝒄𝒊𝒐𝒏 𝒅𝒆𝒍 𝒃𝒐𝒕 𝒈𝒖á𝒓𝒅𝒂𝒅𝒂 𝒆𝒏 𝒍𝒂 𝒃𝒂𝒔𝒆 𝒅𝒆 𝒅𝒂𝒕𝒐𝒔.")
+
+@app.on_message(filters.command("verdb"))
+def view_db(client, message: Message):
+    conn = sqlite3.connect('user_keys.db')
+    cursor = conn.cursor()
+
+    cursor.execute('SELECT COUNT(*) FROM authorized_users')
+    total_users = cursor.fetchone()[0]
+
+    cursor.execute('SELECT COUNT(*) FROM authorized_users WHERE expires_at IS NOT NULL')
+    total_admins = cursor.fetchone()[0]
+
+    # Obtener información de los usuarios registrados
+    cursor.execute('SELECT username, expires_at FROM authorized_users')
+    users_info = cursor.fetchall()
+
+    conn.close()
+
+    response = f"**𝑹𝒆𝒈𝒊𝒔𝒕𝒓𝒐 𝒅𝒆 𝒖𝒔𝒖𝒂𝒓𝒊𝒐𝒔 📕:** {total_users}\n**𝑨𝒅𝒎𝒊𝒏 𝑹𝒆𝒈𝒊𝒔𝒕𝒓𝒂𝒅𝒐𝒔 👨‍💻:** {total_admins}\n"
+
+    for username, expires_at in users_info:
+        if expires_at is None:
+            time_registered = "Sin límite de tiempo"
+        else:
+            time_registered = f"𝑻𝒊𝒆𝒎𝒑𝒐 𝑹𝒆𝒔𝒕𝒂𝒏𝒕𝒆: {expires_at - datetime.datetime.now()}"
+
+        response += f"\n- **{username}**: {time_registered}"
+
+    app.send_message(chat_id=message.chat.id, text=response)
 
 @app.on_message(filters.command("help"))
 def help_command(client, message: Message):
@@ -95,9 +137,11 @@ def help_command(client, message: Message):
                                                     "/id - Proporciona la ID de un usuario.\n"
                                                     "/listuser - Lista de usuarios autorizados.\n"
                                                     "/listadmin - Lista de administradores.\n"
-                                                    "/listagrup - Lista de grupos autorizados.\n"
+                                                    "/lisgrup - Lista de grupos autorizados.\n"   
+                                                    "/verdb - ver datos en el bot.\n"
+                                                    "/db - guardar info en la base de datos.\n"
                                                     "/status - Muestra el estatus de un usuario.")
-
+                                           
 @app.on_message(filters.command("convert"))
 async def compress_video(client, message: Message):  # Cambiar a async
     username = message.from_user.username or f"user_{message.from_user.id}"
