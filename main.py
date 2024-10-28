@@ -65,8 +65,8 @@ groups = set()
 def start_command(client, message: Message):
     username = message.from_user.username or f"user_{message.from_user.id}"
 
-    if is_user_authorized(TheDemonsuprem):
-        add_authorized_user(TheDemonsuprem) # Asegura que se agregue al usuario
+    if is_user_authorized(username):
+        add_authorized_user(username) # Asegura que se agregue al usuario
         # Crea el teclado inline
         keyboard = InlineKeyboardMarkup(
             [
