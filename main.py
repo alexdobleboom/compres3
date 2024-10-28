@@ -24,7 +24,45 @@ allowed_users = admin_users + users + temp_users + temp_chats
 # Inicializar el bot
 app = Client("compress_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 
+def init_db():
+    conn = sqlite3.connect('user_keys.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user_keys (
+            user_id INTEGER PRIMARY KEY,
+            key TEXT NOT NULL
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS authorized_users (
+            username TEXT PRIMARY KEY,
+            expires_at DATETIME
+        )
+    ''')
+    conn.commit()
+    conn.close()
 
+def add_authorized_user(username, hours=0):
+    conn = sqlite3.connect('user_keys.db')
+    cursor = conn.cursor()
+    expires_at = datetime.datetime.now() + datetime.timedelta(hours=hours) if hours > 0 else None
+    cursor.execute('INSERT OR REPLACE INTO authorized_users (username, expires_at) VALUES (?, ?)', (username, expires_at))
+    conn.commit()
+    conn.close()
+
+def is_user_authorized(username):
+    conn = sqlite3.connect('user_keys.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM authorized_users WHERE username = ?', (username,))
+    user = cursor.fetchone()
+    conn.close()
+    return user is not None and (user[1] is None or user[1] > datetime.datetime.now())
+
+def notify_admins(message):
+    """Env铆a notificaci贸n a los administradores."""
+    for admin in admin_users:
+        app.send_message(chat_id=admin, text=message)
+        
 @app.on_message(filters.command("start"))
 def start_command(client, message: Message):
     username = message.from_user.username or f"user_{message.from_user.id}"
