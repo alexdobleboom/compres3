@@ -61,6 +61,12 @@ groups = set()
 
 @app.on_message(filters.command(["start"]))
 async def start(client, message):
+    username = message.from_user.username or f"user_{message.from_user.id}"
+
+    if is_user_authorized(username):
+        add_authorized_user(username)  # Asegura que se agregue al usuario
+        app
+        
     inline_markup = InlineKeyboardMarkup(
         [
             [
