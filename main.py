@@ -7,6 +7,7 @@ import shutil
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from config import API_ID, API_HASH, BOT_TOKEN
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup # Importa InlineKeyboardMarkup
 
 # Inicializar la base de datos
 def init_db():
