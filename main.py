@@ -113,7 +113,7 @@ async def compress_video(client, message: Message):  # Cambiar a async
 
         await app.send_message(chat_id=message.chat.id, text="🚫𝑷𝒓𝒐𝒄𝒆𝒔𝒐 𝒊𝒏𝒊𝒄𝒊𝒂𝒅𝒐 𝒆𝒔𝒑𝒆𝒓𝒆 𝒂 𝒒𝒖𝒆 𝒕𝒆𝒓𝒎𝒊𝒏𝒆🚫.")
 
-        compressed_video_path = f"{os.path.splitext(original_video_path)[0]}_compressed.mkv"
+        compressed_video_path = f"{os.path.splitext(original_video_path)[0]}_compressed.mp4"
         ffmpeg_command = [
             'ffmpeg', '-y', '-i', original_video_path,
             '-s', '740x480', '-crf', '32',  # Ajusta el valor de crf para conseguir una mayor compresión
