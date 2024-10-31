@@ -70,7 +70,7 @@ def start_command(client, message: Message):
         # Crea el teclado inline
         keyboard = InlineKeyboardMarkup(
             [
-                [InlineKeyboardButton("𝑪𝑨𝑵𝑨𝑳 𝑶𝑭𝑰𝑪𝑰𝑨𝑳 💬", url="https://t.me/ZonaFreeCanal")],
+                [InlineKeyboardButton("𝑪𝑨𝑵𝑨𝑳 𝑶𝑭𝑰𝑪𝑰𝑨𝑳 💬", url="https://t.me/AnimalProjets")],
                 [InlineKeyboardButton("𝑷𝒓𝒐𝒈𝒓𝒂𝒎𝒂𝒅𝒐𝒓 👨‍💻", url="t.me/TheDemonsuprem")]
             ]
         )
@@ -78,62 +78,7 @@ def start_command(client, message: Message):
     else:
         app.send_message(chat_id=message.chat.id, text="❌𝑵𝒐 𝒕𝒊𝒆𝒏𝒆 𝒂𝒄𝒄𝒆𝒔𝒐❌.")
         notify_admins(f"𝑬𝒍 𝒖𝒔𝒖𝒂𝒓𝒊𝒐 @{username} 𝒊𝒏𝒕𝒆𝒏𝒕𝒐 𝒂𝒄𝒄𝒆𝒅𝒆𝒓 𝒔𝒊𝒏 𝒑𝒆𝒓𝒎𝒊𝒔𝒐.")
-
-@app.on_message(filters.command("db"))
-def save_db(client, message: Message):
-    username = message.from_user.username or f"user_{message.from_user.id}"
-
-    if is_user_authorized(username):
-        conn = sqlite3.connect('user_keys.db')
-        cursor = conn.cursor()
-
-        # Guarda la información de todos los usuarios en la base de datos
-        for user in app.get_users():
-            cursor.execute("""
-                INSERT OR IGNORE INTO authorized_users (username, expires_at, added_at)
-                VALUES (?, ?, ?)
-            """, (user.username, None, datetime.datetime.now()))
-
-        conn.commit()
-        conn.close()
-        app.send_message(chat_id=message.chat.id, text="𝑰𝒏𝒇𝒐𝒓𝒎𝒂𝒄𝒊𝒐𝒏 𝒈𝒖𝒂𝒓𝒅𝒂𝒅𝒂 𝒆𝒏 𝒍𝒂 𝑫𝑩.")
-    else:
-        app.send_message(chat_id=message.chat.id, text="❌𝑨𝒄𝒄𝒆𝒔𝒐 𝒅𝒆𝒏𝒆𝒈𝒂𝒅𝒐❌.")
-        notify_admins(f"⭕ 𝑬𝒍 𝒖𝒔𝒖𝒂𝒓𝒊𝒐 @{username} 𝒊𝒏𝒕𝒆𝒏𝒕𝒐 𝒂𝒄𝒄𝒆𝒅𝒆𝒓 𝒂𝒍 𝒄𝒐𝒎𝒂𝒏𝒅𝒐 /db ⭕.")
-
-@app.on_message(filters.command("verdb"))
-def view_db(client, message: Message):
-    username = message.from_user.username or f"user_{message.from_user.id}"
-
-    if is_user_authorized(username):
-        conn = sqlite3.connect('user_keys.db')
-        cursor = conn.cursor()
-
-        cursor.execute('SELECT COUNT(*) FROM authorized_users')
-        total_users = cursor.fetchone()[0]
-
-        # Obtener información de los usuarios registrados
-        cursor.execute('SELECT username, added_at, expires_at FROM authorized_users')
-        users_info = cursor.fetchall()
-
-        conn.close()
-
-        response = f"**𝑹𝒆𝒈𝒊𝒔𝒕𝒓𝒐 𝒅𝒆 𝒖𝒔𝒖𝒂𝒓𝒊𝒐𝒔 📕:** {total_users}\n"
-
-        for username, added_at, expires_at in users_info:
-            time_registered = added_at.strftime("%Y-%m-%d %H:%M:%S")
-            if expires_at is None:
-                time_remaining = "𝑵𝒐 𝒑𝒐𝒔𝒆𝒆 𝒍𝒊𝒎𝒊𝒕𝒆"
-            else:
-                time_remaining = f"𝑻𝒊𝒆𝒎𝒑𝒐 𝒓𝒆𝒔𝒕𝒂𝒏𝒕𝒆: {expires_at - datetime.datetime.now()}"
-
-            response += f"\n- **{username}**: 𝑨𝒈𝒓𝒆𝒈𝒂𝒅𝒐: {time_registered}, {time_remaining}" 
-
-        app.send_message(chat_id=message.chat.id, text=response)
-    else:
-        app.send_message(chat_id=message.chat.id, text="❎Error no tienes acceso retirate❎.")
-        notify_admins(f"⭕ 𝑬𝒍 𝒖𝒔𝒖𝒂𝒓𝒊𝒐 @{username} 𝒊𝒏𝒕𝒆𝒏𝒕𝒐 𝒂𝒄𝒄𝒆𝒅𝒆𝒓 𝒂𝒍 𝒄𝒐𝒎𝒂𝒏𝒅𝒐 /verdb ⭕.")
-  
+       
 @app.on_message(filters.command("help"))
 def help_command(client, message: Message):
     app.send_message(chat_id=message.chat.id, text="Comandos disponibles:\n"
